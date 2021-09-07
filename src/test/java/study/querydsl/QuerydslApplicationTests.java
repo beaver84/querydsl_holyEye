@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import study.querydsl.entity.Hello;
 import study.querydsl.entity.QHello;
+import study.querydsl.entity.QMember;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -38,5 +39,4 @@ class QuerydslApplicationTests {
 		assertThat(result).isEqualTo(hello);
 		assertThat(result.getId()).isEqualTo(hello.getId());
 	}
-
 }
