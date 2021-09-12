@@ -2,6 +2,7 @@ package study.querydsl;
 
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.Tuple;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.assertj.core.api.Assert;
 import org.junit.jupiter.api.Assertions;
@@ -271,4 +272,21 @@ public class QuerydslBasicTest {
         assertThat(loaded).as("페치 조인 적용").isTrue();
     }
 
+    @Test
+    public void subQuery() {
+
+        QMember memberSub = new QMember("memberSub");
+
+        List<Member> result = queryFactory
+                .selectFrom(member)
+                .where(member.age.eq(
+                        JPAExpressions
+                                .select(memberSub.age.max())
+                                .from(memberSub)
+                ))
+                .fetch();
+
+        assertThat(result).extracting("age")
+                .containsExactly(40);
+    }
 }
