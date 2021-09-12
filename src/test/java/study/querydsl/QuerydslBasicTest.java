@@ -2,6 +2,7 @@ package study.querydsl;
 
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.Tuple;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.assertj.core.api.Assert;
 import org.junit.jupiter.api.Assertions;
@@ -270,5 +271,59 @@ public class QuerydslBasicTest {
                 emf.getPersistenceUnitUtil().isLoaded(findMember.getTeam());
         assertThat(loaded).as("페치 조인 적용").isTrue();
     }
+
+    @Test
+    public void subQuery() {
+
+        QMember memberSub = new QMember("memberSub");
+
+        List<Member> result = queryFactory
+                .selectFrom(member)
+                .where(member.age.eq(
+                        JPAExpressions
+                                .select(memberSub.age.max())
+                                .from(memberSub)
+                ))
+                .fetch();
+
+        assertThat(result).extracting("age")
+                .containsExactly(40);
+    }
+
+    /**
+     * 나이가 평균 나이 이상인 회원
+     */
+    @Test
+    public void subQueryGoe() throws Exception {
+        QMember memberSub = new QMember("memberSub");
+        List<Member> result = queryFactory
+                .selectFrom(member)
+                .where(member.age.goe(
+                        JPAExpressions
+                                .select(memberSub.age.avg())
+                                .from(memberSub)
+                ))
+                .fetch();
+        assertThat(result).extracting("age")
+                .containsExactly(30, 40);
+    }
+
+    @Test
+    public void subQueryIn() throws Exception {
+        QMember memberSub = new QMember("memberSub");
+        List<Member> result = queryFactory
+                .selectFrom(member)
+                .where(member.age.in(
+                        JPAExpressions
+                                .select(memberSub.age)
+                                .from(memberSub)
+                                .where(memberSub.age.gt(10))
+                ))
+                .fetch();
+        assertThat(result).extracting("age")
+                .containsExactly(20, 30, 40);
+    }
+
+
 
 }
