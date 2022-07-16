@@ -44,6 +44,8 @@ public class QuerydslBasicTest {
     EntityManager em;
 
     JPAQueryFactory queryFactory;
+    @PersistenceUnit
+    EntityManagerFactory emf;
 
     @BeforeEach
     public void before() {
@@ -167,6 +169,8 @@ public class QuerydslBasicTest {
                 .fetchResults();
 
         assertThat(queryResults.getTotal()).isEqualTo(4);
+        assertThat(queryResults.getResults().size()).isEqualTo(2);
+
     }
 
     @Test
@@ -244,10 +248,6 @@ public class QuerydslBasicTest {
             System.out.println("t=" + tuple);
         }
     }
-
-
-    @PersistenceUnit
-    EntityManagerFactory emf;
 
     @Test
     public void fetchJoinNo() throws Exception {

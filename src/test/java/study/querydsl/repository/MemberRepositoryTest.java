@@ -3,6 +3,7 @@ package study.querydsl.repository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import study.querydsl.dto.MemberSearchCondition;
 import study.querydsl.dto.MemberTeamDto;
@@ -76,7 +77,7 @@ class MemberRepositoryTest {
 
         QMember member = QMember.member;
         Iterable<Member> result = memberRepository.findAll(
-                member.age.between(10, 40)
+                (Pageable) member.age.between(10, 40)
                         .and(member.username.eq("member1"))
         );
 
